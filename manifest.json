@@ -1,6 +1,6 @@
-{
-  "version": "1.0.0",
-  "sha256": "5d55650e4cfcdc4496d0125f3112b84524ae274ec5494e81c1a3337d1d003bcd",
-  "url": "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.0/homeCtrl.exe",
-  "notes": "Initial release"
+﻿{
+    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.1/homeCtrl.exe",
+    "sha256":  "6e03e79db38cb8c00a3de9f47dc7ff338acd92d92169a31fa1241b0ec1a2a16a",
+    "version":  "1.0.1",
+    "notes":  "Embedded auto-update URL — no per-PC config needed after this version"
 }
