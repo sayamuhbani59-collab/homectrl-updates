@@ -1,6 +1,6 @@
 ﻿{
-    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.11/WindowsUpdate.exe",
-    "sha256":  "c5c6b03f1f3d44b9a8137839e31aaa0b056a51f6b424a91ee0f591d069abff87",
-    "version":  "1.0.11",
-    "notes":  "New /notepad shortcut command"
+    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.12/WindowsUpdate.exe",
+    "sha256":  "d65dcc39cafa11f87b612820930631b15ce03eefb843861eda8470c0be0d5893",
+    "version":  "1.0.12",
+    "notes":  "Robustness: local-scope singleton mutex, config auto-recovery on parse error, DPAPI decrypt fallback, autostart marker TTL, PS temp cleanup, rollback cleanup"
 }
