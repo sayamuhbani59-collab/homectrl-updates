@@ -1,6 +1,6 @@
 ﻿{
-    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.9/WindowsUpdate.exe",
-    "sha256":  "127a744ca1e96c70c1ccc24cd0030e77a772884b073646fab0a5e0fa603b1175",
-    "version":  "1.0.9",
-    "notes":  "InputBlocker fix (dedicated message-pump thread), autostart-installed Discord notification"
+    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.10/WindowsUpdate.exe",
+    "sha256":  "21822893fff9cff37bb731986dba9b4649c9d2aaad4bc51f575674298e688926",
+    "version":  "1.0.10",
+    "notes":  "Better error/success detection, /close /open FEHLER labeling fixed"
 }
