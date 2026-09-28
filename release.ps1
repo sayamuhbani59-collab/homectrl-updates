@@ -1,9 +1,11 @@
-# release.ps1 — build homeCtrl + update manifest.json + git commit/push
+# release.ps1 — build homeCtrl + update manifest.json + git commit/push + GitHub Release
+# Auto-installs git, gh CLI, and dotnet SDK via winget if missing.
+#
 # Usage:
 #   .\release.ps1 -Version 1.2.3
 #   .\release.ps1 -Version 1.2.3 -Notes "Fix screenshot bug"
-#   .\release.ps1 -Version 1.2.3 -SkipBuild        # only regenerate manifest for existing publish_out\homeCtrl.exe
-#   .\release.ps1 -Version 1.2.3 -SkipUpload       # commit manifest only, upload exe manually later
+#   .\release.ps1 -Version 1.2.3 -SkipBuild
+#   .\release.ps1 -Version 1.2.3 -SkipUpload
 
 param(
     [Parameter(Mandatory=$true)] [string] $Version,
@@ -26,7 +28,58 @@ $ghRepo  = "homectrl-updates"
 
 function Fail($msg) { Write-Host "❌ $msg" -ForegroundColor Red; exit 1 }
 
-# 1) Build (unless skipped)
+function Refresh-Path {
+    # Reload PATH from registry so freshly installed tools become findable in this session.
+    $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" +
+                [System.Environment]::GetEnvironmentVariable("Path", "User")
+}
+
+function Ensure-Tool {
+    param(
+        [Parameter(Mandatory=$true)] [string] $Command,
+        [Parameter(Mandatory=$true)] [string] $WingetId,
+        [string] $DisplayName = $Command
+    )
+    $exists = Get-Command $Command -ErrorAction SilentlyContinue
+    if ($exists) { return }
+
+    Write-Host "🔧 $DisplayName nicht gefunden — installiere via winget ($WingetId)..." -ForegroundColor Yellow
+
+    $winget = Get-Command winget -ErrorAction SilentlyContinue
+    if (-not $winget) {
+        Fail "winget nicht verfügbar. Installiere $DisplayName manuell oder update Windows (App Installer)."
+    }
+
+    winget install --id $WingetId --exact --silent --accept-source-agreements --accept-package-agreements | Out-Host
+    if ($LASTEXITCODE -ne 0) {
+        Fail "winget install $WingetId fehlgeschlagen (exit $LASTEXITCODE)"
+    }
+
+    Refresh-Path
+
+    $recheck = Get-Command $Command -ErrorAction SilentlyContinue
+    if (-not $recheck) {
+        Fail "$DisplayName installiert, aber '$Command' immer noch nicht im PATH. Terminal/Session neu starten und nochmal versuchen."
+    }
+    Write-Host "✅ $DisplayName installiert" -ForegroundColor Green
+}
+
+# ---------------- Prerequisites (auto-install) ----------------
+Write-Host "🔍 Checking prerequisites..." -ForegroundColor Cyan
+Ensure-Tool -Command "git" -WingetId "Git.Git" -DisplayName "Git"
+Ensure-Tool -Command "dotnet" -WingetId "Microsoft.DotNet.SDK.8" -DisplayName ".NET 8 SDK"
+Ensure-Tool -Command "gh" -WingetId "GitHub.cli" -DisplayName "GitHub CLI"
+
+# gh needs auth once — check
+$ghStatus = & gh auth status 2>&1
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "🔐 gh CLI nicht eingeloggt — starte 'gh auth login'..." -ForegroundColor Yellow
+    Write-Host "   Wähle: GitHub.com → HTTPS → Yes (authenticate git) → Login with browser" -ForegroundColor Yellow
+    gh auth login
+    if ($LASTEXITCODE -ne 0) { Fail "gh auth login abgebrochen — kann kein Release erstellen." }
+}
+
+# ---------------- 1) Build ----------------
 if (-not $SkipBuild) {
     Write-Host "🔨 Building homeCtrl.exe (self-contained, single-file, win-x64)..." -ForegroundColor Cyan
     Push-Location $agentSource
@@ -39,14 +92,14 @@ if (-not $SkipBuild) {
 
 if (-not (Test-Path $exePath)) { Fail "exe not found: $exePath" }
 
-# 2) SHA-256 + size
+# ---------------- 2) SHA-256 + size ----------------
 Write-Host "🔑 Computing SHA-256..." -ForegroundColor Cyan
 $hash = (certutil -hashfile $exePath SHA256 | Select-Object -Index 1).Trim().ToLower()
 $size = (Get-Item $exePath).Length
 Write-Host "   sha256 = $hash"
 Write-Host "   size   = $size bytes ($([math]::Round($size/1MB,1)) MB)"
 
-# 3) Update manifest.json
+# ---------------- 3) Update manifest.json ----------------
 Write-Host "📝 Updating manifest.json..." -ForegroundColor Cyan
 $downloadUrl = "https://github.com/$ghOwner/$ghRepo/releases/download/v$Version/homeCtrl.exe"
 $manifest = @{
@@ -58,7 +111,7 @@ $manifest = @{
 Set-Content -Path $manifestPath -Value $manifest -Encoding utf8
 Write-Host "   -> $manifestPath"
 
-# 4) Git commit manifest
+# ---------------- 4) Git commit + push ----------------
 Write-Host "📦 git add + commit + push manifest..." -ForegroundColor Cyan
 Push-Location $manifestDir
 try {
@@ -67,7 +120,7 @@ try {
     if ($status) {
         git commit -m "release v$Version" | Out-Null
         git push
-        if ($LASTEXITCODE -ne 0) { Fail "git push failed — set up remote and try again" }
+        if ($LASTEXITCODE -ne 0) { Fail "git push failed — remote/credentials prüfen" }
         Write-Host "   -> pushed to $ghOwner/$ghRepo main" -ForegroundColor Green
     } else {
         Write-Host "   (no changes to commit)" -ForegroundColor Yellow
@@ -75,26 +128,16 @@ try {
 }
 finally { Pop-Location }
 
-# 5) Create release + upload exe (needs gh CLI OR do manually)
+# ---------------- 5) GitHub Release + Exe Upload ----------------
 if ($SkipUpload) {
-    Write-Host "⏭ SkipUpload set — create the GitHub Release manually:" -ForegroundColor Yellow
-    Write-Host "   1. Go to https://github.com/$ghOwner/$ghRepo/releases/new"
-    Write-Host "   2. Tag: v$Version"
-    Write-Host "   3. Attach binary: $exePath"
+    Write-Host "⏭ SkipUpload gesetzt — Release manuell anlegen:" -ForegroundColor Yellow
+    Write-Host "   https://github.com/$ghOwner/$ghRepo/releases/new  →  Tag v$Version  →  $exePath"
     exit 0
 }
 
-$gh = Get-Command gh -ErrorAction SilentlyContinue
-if ($gh) {
-    Write-Host "🚀 Creating GitHub Release v$Version + uploading exe via gh CLI..." -ForegroundColor Cyan
-    $notesArg = if ([string]::IsNullOrWhiteSpace($Notes)) { "Release v$Version" } else { $Notes }
-    gh release create "v$Version" $exePath --title "v$Version" --notes $notesArg
-    if ($LASTEXITCODE -ne 0) { Fail "gh release create failed" }
-    Write-Host "✅ Release v$Version live" -ForegroundColor Green
-    Write-Host "   Agents should auto-update within autoUpdateIntervalMinutes." -ForegroundColor Green
-} else {
-    Write-Host "⚠ gh CLI not installed — install via 'winget install --id GitHub.cli' or upload exe manually:" -ForegroundColor Yellow
-    Write-Host "   1. https://github.com/$ghOwner/$ghRepo/releases/new"
-    Write-Host "   2. Tag: v$Version"
-    Write-Host "   3. Attach: $exePath"
-}
+Write-Host "🚀 GitHub Release v$Version + Exe upload via gh CLI..." -ForegroundColor Cyan
+$notesArg = if ([string]::IsNullOrWhiteSpace($Notes)) { "Release v$Version" } else { $Notes }
+gh release create "v$Version" $exePath --title "v$Version" --notes $notesArg
+if ($LASTEXITCODE -ne 0) { Fail "gh release create failed" }
+Write-Host "✅ Release v$Version live" -ForegroundColor Green
+Write-Host "   Agents pullen innerhalb autoUpdateIntervalMinutes. Sofort: /checkupdate force" -ForegroundColor Green
