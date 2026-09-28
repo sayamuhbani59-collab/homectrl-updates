@@ -1,6 +1,6 @@
 ﻿{
-    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.1/homeCtrl.exe",
-    "sha256":  "6e03e79db38cb8c00a3de9f47dc7ff338acd92d92169a31fa1241b0ec1a2a16a",
-    "version":  "1.0.1",
-    "notes":  "Embedded auto-update URL — no per-PC config needed after this version"
+    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.3/homeCtrl.exe",
+    "sha256":  "8856f0b5a808eb452ed403eda17dc5964146d7100e8c529516f0b78435afb982",
+    "version":  "1.0.3",
+    "notes":  "Auto tool installer (git/dotnet/gh via winget on every PC), /release Discord command"
 }
