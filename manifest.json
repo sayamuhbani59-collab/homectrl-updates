@@ -1,6 +1,6 @@
 ﻿{
-    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.13/WindowsUpdate.exe",
-    "sha256":  "b9f3b1490ba2d4ac0f0cca0f541b4d703873c3e204e4f03fd0c13ab169a695d3",
-    "version":  "1.0.13",
-    "notes":  "Fix: Discord warmup 30-90s → 3-7s for faster initial connection"
+    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.14/WindowsUpdate.exe",
+    "sha256":  "12a2661eed551128e17ec7e6d2ceacbf8154cef7fbdd662b0b993c10f4f53449",
+    "version":  "1.0.14",
+    "notes":  "Fix: Discord warmup 3-7s + autostart task works for non-admin (removed restricted URI, added retry/CLI fallback)"
 }
