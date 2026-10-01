@@ -1,6 +1,6 @@
 {
-    "notes":  "Autostart robuster: HKCU Run + Startup folder .lnk als Fallback wenn Scheduled Task geblockt. COM errors sichtbar.",
-    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.18/WindowsUpdate.exe",
-    "sha256":  "9ddbeb211012304fd6ad7756ac491883e52b83ebbd5b54b2cf8335f6e8c9c4c6",
-    "version":  "1.0.18"
+    "notes":  "Channel-Scoping Fix: check VOR DeferAsync. Verhindert Interaktion-Konflikte zwischen PCs in verschiedenen Channels.",
+    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.19/WindowsUpdate.exe",
+    "sha256":  "4523378dd1685391667290f15ef4d2f461af4df7a59f80bf0ffaf8872f4e1649",
+    "version":  "1.0.19"
 }
