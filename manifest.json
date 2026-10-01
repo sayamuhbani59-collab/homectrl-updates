@@ -1,6 +1,6 @@
 ﻿{
-    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.14/WindowsUpdate.exe",
-    "sha256":  "12a2661eed551128e17ec7e6d2ceacbf8154cef7fbdd662b0b993c10f4f53449",
-    "version":  "1.0.14",
-    "notes":  "Fix: Discord warmup 3-7s + autostart task works for non-admin (removed restricted URI, added retry/CLI fallback)"
+    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.15/WindowsUpdate.exe",
+    "sha256":  "b3246a76259f5a94289c24b86ca4e1f9d603d9c16f8c8d196401af40d0d58a8f",
+    "version":  "1.0.15",
+    "notes":  "Autostart: per-user task name + HKCU Run key fallback (works even when stale admin task blocks /Create)"
 }
