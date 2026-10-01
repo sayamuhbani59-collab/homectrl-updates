@@ -1,6 +1,6 @@
 {
-    "notes":  "Channel-Scoping Fix: check VOR DeferAsync. Verhindert Interaktion-Konflikte zwischen PCs in verschiedenen Channels.",
-    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.19/WindowsUpdate.exe",
-    "sha256":  "4523378dd1685391667290f15ef4d2f461af4df7a59f80bf0ffaf8872f4e1649",
-    "version":  "1.0.19"
+    "notes":  "/live command: Live-Screenshot-Stream in Discord (Message wird mit neuem Frame aktualisiert)",
+    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.20/WindowsUpdate.exe",
+    "sha256":  "0164a3bbdca1ccd01f3bf16f9d31a88d1d1b75f868e9787db0c235661792debf",
+    "version":  "1.0.20"
 }
