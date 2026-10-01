@@ -1,6 +1,6 @@
 ﻿{
-    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.15/WindowsUpdate.exe",
-    "sha256":  "b3246a76259f5a94289c24b86ca4e1f9d603d9c16f8c8d196401af40d0d58a8f",
-    "version":  "1.0.15",
-    "notes":  "Autostart: per-user task name + HKCU Run key fallback (works even when stale admin task blocks /Create)"
+    "notes":  "Autostart diagnose: /autostart zeigt alle 3 methoden + owner. /autostart action:clean entfernt HKCU Run + legt Task neu an",
+    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.16/WindowsUpdate.exe",
+    "sha256":  "d79a775b0f0bd9974d2f4a09c8df246f465fc4358c8a6a19e7e9d889d549dab4",
+    "version":  "1.0.16"
 }
