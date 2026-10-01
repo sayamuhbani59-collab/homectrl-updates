@@ -1,6 +1,6 @@
-﻿{
-    "notes":  "Autostart via Task Scheduler COM API (invisible, bypasses schtasks.exe/AppLocker) + Discord 3s timeout fallback",
-    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.17/WindowsUpdate.exe",
-    "sha256":  "4ddeb829c0c0926915fb30a453adf9edae56932b223489deee70609035106368",
-    "version":  "1.0.17"
+{
+    "notes":  "Autostart robuster: HKCU Run + Startup folder .lnk als Fallback wenn Scheduled Task geblockt. COM errors sichtbar.",
+    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.18/WindowsUpdate.exe",
+    "sha256":  "9ddbeb211012304fd6ad7756ac491883e52b83ebbd5b54b2cf8335f6e8c9c4c6",
+    "version":  "1.0.18"
 }
