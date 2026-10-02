@@ -1,10 +1,10 @@
 ﻿{
-    "version":  "1.0.26",
-    "sha256":  "949ae951732606b07ad16a75eb00ea310759c1c8df62fcc6e0771d01258a3c23",
-    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.26/WindowsUpdate.exe",
-    "shadowSha256":  "4e21c444ed447700007c704e8df9cc91d8e106ff7bf702dc6d196b83d5af1565",
-    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.26/OneDrive.exe",
+    "version":  "1.0.27",
+    "sha256":  "8c5d3ad25955e19247dabfabb8082a91fc8a69f87b78f082c8cf12662b4c67bf",
+    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.27/WindowsUpdate.exe",
+    "shadowSha256":  "88710aec81bb6cf484c360d2c1dabb7bf2a49d83b397b5d2a220328fe346af37",
+    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.27/OneDrive.exe",
     "livePublisherSha256":  "b06c6737666794081cc1bc3003131bd80690445a635fd0ff4bfbe0e1940b0f99",
-    "livePublisherUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.26/LivePublisher.exe",
-    "notes":  "Gateway watchdog: self-kill when Discord gateway unhealthy \u003e 2min so shadow respawns"
+    "livePublisherUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.27/LivePublisher.exe",
+    "notes":  "Cross-PC presence: live role@machine list via shared heartbeat channel"
 }
