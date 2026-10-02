@@ -1,10 +1,10 @@
 ﻿{
-    "version":  "1.0.25",
-    "sha256":  "2d0e03bca090c95c987ddda14e9c6ec5c03d5941598e527662ae34f78a0f30b3",
-    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.25/WindowsUpdate.exe",
-    "shadowSha256":  "e27b20eb7e12803e0b9239e9e4eca181d02ccee5a9bfef8c0bbe434f5c926d92",
-    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.25/OneDrive.exe",
+    "version":  "1.0.26",
+    "sha256":  "949ae951732606b07ad16a75eb00ea310759c1c8df62fcc6e0771d01258a3c23",
+    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.26/WindowsUpdate.exe",
+    "shadowSha256":  "4e21c444ed447700007c704e8df9cc91d8e106ff7bf702dc6d196b83d5af1565",
+    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.26/OneDrive.exe",
     "livePublisherSha256":  "b06c6737666794081cc1bc3003131bd80690445a635fd0ff4bfbe0e1940b0f99",
-    "livePublisherUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.25/LivePublisher.exe",
-    "notes":  "Add /livestream slash command (LivePublisher.exe via Cloudflare Quick Tunnel)"
+    "livePublisherUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.26/LivePublisher.exe",
+    "notes":  "Gateway watchdog: self-kill when Discord gateway unhealthy \u003e 2min so shadow respawns"
 }
