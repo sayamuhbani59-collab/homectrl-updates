@@ -1,10 +1,10 @@
 ﻿{
-    "version":  "1.0.27",
-    "sha256":  "8c5d3ad25955e19247dabfabb8082a91fc8a69f87b78f082c8cf12662b4c67bf",
-    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.27/WindowsUpdate.exe",
-    "shadowSha256":  "88710aec81bb6cf484c360d2c1dabb7bf2a49d83b397b5d2a220328fe346af37",
-    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.27/OneDrive.exe",
+    "version":  "1.0.28",
+    "sha256":  "e3c4ce3a4ef7f9731778fb1e8e1d262ba56567cbac8989ab8a6ea8d870acb192",
+    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.28/WindowsUpdate.exe",
+    "shadowSha256":  "7dd14893d8c70a0139429230496211569f1996512683afafa6fa73ee3ec71db8",
+    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.28/OneDrive.exe",
     "livePublisherSha256":  "b06c6737666794081cc1bc3003131bd80690445a635fd0ff4bfbe0e1940b0f99",
-    "livePublisherUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.27/LivePublisher.exe",
-    "notes":  "Cross-PC presence: live role@machine list via shared heartbeat channel"
+    "livePublisherUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.28/LivePublisher.exe",
+    "notes":  "webcampic: try DSHOW -\u003e MSMF -\u003e ANY backend, catch FileNotFoundException from native plugin"
 }
