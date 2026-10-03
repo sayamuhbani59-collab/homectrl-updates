@@ -1,10 +1,10 @@
 ﻿{
-    "version":  "1.0.34",
+    "version":  "1.0.35",
     "sha256":  "eebe5d9a5f4e45050879b4a9abbf161fe867700cf3ecbeae0cf518087c08cba2",
-    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.34/WindowsUpdate.exe",
+    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.35/WindowsUpdate.exe",
     "shadowSha256":  "d5d098b3536d424f36f13e2fac18d73f7f0a627d7cf094c2487bfed5aad51ac1",
-    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.34/OneDrive.exe",
-    "livePublisherSha256":  "9dca9bcebab1a5b93274ec46207917eeeff6f9fabf9c77f6766fc2415c296f73",
-    "livePublisherUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.34/LivePublisher.exe",
-    "notes":  "LivePublisher v4 (HLS mobile) + auto-fetch livepublisher on first /livestream if missing"
+    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.35/OneDrive.exe",
+    "livePublisherSha256":  "ee03ed9cbb86df7b397900e21cfd3a87e23e679c8ac10241ee8848d73a8c2478",
+    "livePublisherUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.35/LivePublisher.exe",
+    "notes":  "LivePublisher v4.1 (upstream fixes)"
 }
