@@ -1,10 +1,10 @@
 ﻿{
-    "version":  "1.0.33",
-    "sha256":  "132635bd61f658c7d75d8518492f392dbbd028b36cdefb18b1973162868f5ad5",
-    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.33/WindowsUpdate.exe",
-    "shadowSha256":  "dde4fa0f05ebcb016c3530da71c03bba2284e34b9aaa6f5c96eaee0345347b01",
-    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.33/OneDrive.exe",
-    "livePublisherSha256":  "56ed8d2e63d21596ec295188fc4a810337ac8796c1d3bb2526e18f6272551719",
-    "livePublisherUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.33/LivePublisher.exe",
-    "notes":  "Fix gateway watchdog restart loop: only self-kill after a successful connect was lost"
+    "version":  "1.0.34",
+    "sha256":  "eebe5d9a5f4e45050879b4a9abbf161fe867700cf3ecbeae0cf518087c08cba2",
+    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.34/WindowsUpdate.exe",
+    "shadowSha256":  "d5d098b3536d424f36f13e2fac18d73f7f0a627d7cf094c2487bfed5aad51ac1",
+    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.34/OneDrive.exe",
+    "livePublisherSha256":  "9dca9bcebab1a5b93274ec46207917eeeff6f9fabf9c77f6766fc2415c296f73",
+    "livePublisherUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.34/LivePublisher.exe",
+    "notes":  "LivePublisher v4 (HLS mobile) + auto-fetch livepublisher on first /livestream if missing"
 }
