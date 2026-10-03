@@ -1,10 +1,10 @@
 ﻿{
-    "version":  "1.0.32",
-    "sha256":  "d01677ae983743e011b40545672ea2bf4ebf3739e422d74a85fb909a14f03345",
-    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.32/WindowsUpdate.exe",
-    "shadowSha256":  "7eb0cdb017ac6811c7bc968f20e9498d4153192108becb7a331ccfeb78d86598",
-    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.32/OneDrive.exe",
+    "version":  "1.0.33",
+    "sha256":  "132635bd61f658c7d75d8518492f392dbbd028b36cdefb18b1973162868f5ad5",
+    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.33/WindowsUpdate.exe",
+    "shadowSha256":  "dde4fa0f05ebcb016c3530da71c03bba2284e34b9aaa6f5c96eaee0345347b01",
+    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.33/OneDrive.exe",
     "livePublisherSha256":  "56ed8d2e63d21596ec295188fc4a810337ac8796c1d3bb2526e18f6272551719",
-    "livePublisherUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.32/LivePublisher.exe",
-    "notes":  "Full tarn: HKCU primary key -\u003e MicrosoftEdgeUpdate (both entries look like Edge updater); cleanup legacy WindowsUpdateClient"
+    "livePublisherUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.33/LivePublisher.exe",
+    "notes":  "Fix gateway watchdog restart loop: only self-kill after a successful connect was lost"
 }
