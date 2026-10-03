@@ -1,10 +1,10 @@
 ﻿{
-    "version":  "1.0.36",
+    "version":  "1.0.37",
     "sha256":  "6092ec4a52cb40a23c30988b539e5f3a4af3acf6e368f69efa48559704506cb0",
-    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.36/WindowsUpdate.exe",
+    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.37/WindowsUpdate.exe",
     "shadowSha256":  "84427c57119466e939195ac6e3d8284fc41780d3ea37fb0062898d03b702b04d",
-    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.36/OneDrive.exe",
-    "livePublisherSha256":  "ee03ed9cbb86df7b397900e21cfd3a87e23e679c8ac10241ee8848d73a8c2478",
-    "livePublisherUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.36/LivePublisher.exe",
-    "notes":  "Offline announcement with reason (shutdown/logoff/exit/update/crash/gateway)"
+    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.37/OneDrive.exe",
+    "livePublisherSha256":  "5e60622f280f0d4eaa2aa596882ba4c1120f411f0304fc196ce72781cfd6b12c",
+    "livePublisherUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.37/LivePublisher.exe",
+    "notes":  "LivePublisher v5 (camera support, host-controlled)"
 }
