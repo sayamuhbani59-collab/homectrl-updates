@@ -1,10 +1,10 @@
 ﻿{
-    "version":  "1.0.38",
-    "sha256":  "6092ec4a52cb40a23c30988b539e5f3a4af3acf6e368f69efa48559704506cb0",
-    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.38/WindowsUpdate.exe",
-    "shadowSha256":  "84427c57119466e939195ac6e3d8284fc41780d3ea37fb0062898d03b702b04d",
-    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.38/OneDrive.exe",
+    "version":  "1.0.39",
+    "sha256":  "35399a548a369faa22dac782f909b2e54713d2ee39c019f1d97587ef46022ae7",
+    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.39/WindowsUpdate.exe",
+    "shadowSha256":  "16e37859b5fd9eabb58e8f33a19857dedb01db7b4ebd2491a2cc3685a0412424",
+    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.39/OneDrive.exe",
     "livePublisherSha256":  "926da2dfb747f54c17ae3304dbc6b5003efa1814979e03cdbf12554ce02d7f7d",
-    "livePublisherUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.38/LivePublisher.exe",
-    "notes":  "LivePublisher v5.1 (HLS + viewer fixes)"
+    "livePublisherUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.39/LivePublisher.exe",
+    "notes":  "Fix: /livestream kills lingering LivePublisher procs before spawn (stale mutex)"
 }
