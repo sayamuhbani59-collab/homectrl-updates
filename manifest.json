@@ -1,10 +1,12 @@
 ﻿{
-    "version":  "1.0.39",
-    "sha256":  "35399a548a369faa22dac782f909b2e54713d2ee39c019f1d97587ef46022ae7",
-    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.39/WindowsUpdate.exe",
-    "shadowSha256":  "16e37859b5fd9eabb58e8f33a19857dedb01db7b4ebd2491a2cc3685a0412424",
-    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.39/OneDrive.exe",
-    "livePublisherSha256":  "926da2dfb747f54c17ae3304dbc6b5003efa1814979e03cdbf12554ce02d7f7d",
-    "livePublisherUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.39/LivePublisher.exe",
-    "notes":  "Fix: /livestream kills lingering LivePublisher procs before spawn (stale mutex)"
+    "version":  "1.0.40",
+    "sha256":  "2cc43e080dbe7c1f0afa8f1054fb4d8c873d190ec3b34e8c9c458359cad3630a",
+    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.40/WindowsUpdate.exe",
+    "shadowSha256":  "fafb3ed437e9f118026f1b94deb91d8534b793f2015decf01b73f92886a62b73",
+    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.40/OneDrive.exe",
+    "guardianSha256":  "180507056e026685147013d8b9bb6cf3bc3c119df0141bf140918f7627f6b1f4",
+    "guardianUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.40/WindowsUpdateMonitor.exe",
+    "livePublisherSha256":  "562e17bdb9d0050b10f0655065eeecfb8329144183f50fc86729b9f26b17646b",
+    "livePublisherUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.40/LivePublisher.exe",
+    "notes":  "Guardian health monitor (opt-in oneliner) + code review bundle: autostart robustness, stealth file-sweep, AV compression off, atomic config, upload path safety, audit log prune, streaming auto-update download, livestream mic/HLS hardening"
 }
