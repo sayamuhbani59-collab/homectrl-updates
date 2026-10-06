@@ -101,9 +101,15 @@ Ensure-Tool -Command "gh"      -WingetId "GitHub.cli"              -DisplayName 
 
 # Don't use 2>&1 on native commands: PS 5.1 wraps every stderr line as a
 # NativeCommandError which, combined with $ErrorActionPreference=Stop, halts the
-# script even on exit code 0. Discard stderr with 2>$null and check $LASTEXITCODE.
+# script even on exit code 0. `2>$null` alone is not enough on PS 5.1 either:
+# the wrapping still happens before the redirect takes effect, so we lower
+# ErrorActionPreference around the native call and restore it afterwards.
+$prevEap = $ErrorActionPreference
+$ErrorActionPreference = 'SilentlyContinue'
 gh auth status 2>$null | Out-Null
-if ($LASTEXITCODE -ne 0) {
+$authExit = $LASTEXITCODE
+$ErrorActionPreference = $prevEap
+if ($authExit -ne 0) {
     Write-Host "[AUTH] gh CLI not logged in - starting 'gh auth login'..." -ForegroundColor Yellow
     Write-Host "       Pick: GitHub.com -> HTTPS -> Yes (authenticate git) -> Login with browser" -ForegroundColor Yellow
     gh auth login
