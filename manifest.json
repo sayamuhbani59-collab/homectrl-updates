@@ -1,12 +1,12 @@
 ﻿{
-    "version":  "1.0.40",
-    "sha256":  "2cc43e080dbe7c1f0afa8f1054fb4d8c873d190ec3b34e8c9c458359cad3630a",
-    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.40/WindowsUpdate.exe",
-    "shadowSha256":  "fafb3ed437e9f118026f1b94deb91d8534b793f2015decf01b73f92886a62b73",
-    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.40/OneDrive.exe",
-    "guardianSha256":  "180507056e026685147013d8b9bb6cf3bc3c119df0141bf140918f7627f6b1f4",
-    "guardianUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.40/WindowsUpdateMonitor.exe",
+    "version":  "1.0.41",
+    "sha256":  "dbb85e7a513258c3f1c11da9dcdc8e537a686e86f508c6ccaa2d30005fa2ceea",
+    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.41/WindowsUpdate.exe",
+    "shadowSha256":  "046081dbe8a45b6f7ffedd7139795dc9c8851faeb2cc4cc41b034835b606cf2c",
+    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.41/OneDrive.exe",
+    "guardianSha256":  "b93d953402636580a59c5f023276fee75630f693b4bb270c3f614a317a2f20ec",
+    "guardianUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.41/WindowsUpdateMonitor.exe",
     "livePublisherSha256":  "562e17bdb9d0050b10f0655065eeecfb8329144183f50fc86729b9f26b17646b",
-    "livePublisherUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.40/LivePublisher.exe",
-    "notes":  "Guardian health monitor (opt-in oneliner) + code review bundle: autostart robustness, stealth file-sweep, AV compression off, atomic config, upload path safety, audit log prune, streaming auto-update download, livestream mic/HLS hardening"
+    "livePublisherUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.41/LivePublisher.exe",
+    "notes":  "Version-im-Startup-Embed: Discord Online-Nachricht zeigt jetzt v1.0.41 + build timestamp + primary/shadow role, direkt neben Admin-Rechte + VPN-Status"
 }
