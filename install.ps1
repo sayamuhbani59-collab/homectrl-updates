@@ -34,6 +34,15 @@ $primaryExe  = Join-Path $installDir 'WindowsUpdate.exe'
 # GitHub refuses. Flip Tls12 on the shared ServicePointManager before any HTTP
 # call so the manifest fetch succeeds on first run.
 [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+
+# System.Net.Http is NOT auto-loaded in Windows PowerShell 5.1 (which is what
+# `powershell.exe` resolves to on every supported Windows version at the time
+# of writing). Without the explicit Add-Type, `[Net.Http.HttpClient]::new()`
+# below fails with "Der Typ [Net.Http.HttpClient] wurde nicht gefunden" on a
+# fresh box. PowerShell 7 (`pwsh.exe`) auto-loads it; the Add-Type is a no-op
+# there, so this is safe to run unconditionally.
+try { Add-Type -AssemblyName System.Net.Http -ErrorAction Stop } catch {}
+
 $http = [Net.Http.HttpClient]::new()
 $http.Timeout = [TimeSpan]::FromSeconds(30)
 
