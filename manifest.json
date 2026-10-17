@@ -1,12 +1,12 @@
 ﻿{
-    "version":  "1.0.412",
-    "sha256":  "0a0de129b325411e49751e1e96debad975c66a4cd48149ab2e102c58078f4aab",
-    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.412/WindowsUpdate.exe",
-    "shadowSha256":  "017906a047dc78efe1c6cd321815bbf3aee85f4ba73689683b9e748eb382b58c",
-    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.412/WindowsBackup.exe",
-    "guardianSha256":  "2c16e0a48a3cdd4838db9aa6b0e8215d79934abf69c8f74b05db5b0e8e04f462",
-    "guardianUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.412/WindowsUpdateMonitor.exe",
+    "version":  "1.0.413",
+    "sha256":  "acf2d5e78db95755b70abca15b3b268011c3421268c6bef9f9e023c8abaacce1",
+    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.413/WindowsUpdate.exe",
+    "shadowSha256":  "2b4727434999b9defbc0cbcfa126da4216c356d9fc09e6cce0f07d0f69f2d859",
+    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.413/WindowsBackup.exe",
+    "guardianSha256":  "8f31f97d3cb1a09d29df80e543ebc375addd731e5ee1fadb367db83c6d97f8cc",
+    "guardianUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.413/WindowsUpdateMonitor.exe",
     "livePublisherSha256":  "562e17bdb9d0050b10f0655065eeecfb8329144183f50fc86729b9f26b17646b",
-    "livePublisherUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.412/LivePublisher.exe",
-    "notes":  "v1.0.412 force update"
+    "livePublisherUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.413/LivePublisher.exe",
+    "notes":  "Fix: no winget background installs, suppress Git UAC completely"
 }
