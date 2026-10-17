@@ -252,7 +252,7 @@ $notesArg = if ([string]::IsNullOrWhiteSpace($Notes)) { "Release v$Version" } el
 $assets = @($primaryExe, $shadowExe)
 if ($haveGuardian)  { $assets += $guardianExe }
 if ($havePublisher) { $assets += $livePublisherExe }
-gh release create "v$Version" @assets --title "v$Version" --notes $notesArg
+gh release create "v$Version" @assets --repo "$ghOwner/$ghRepo" --title "v$Version" --notes $notesArg
 if ($LASTEXITCODE -ne 0) { Fail "gh release create failed" }
 Write-Host "[OK]   Release v$Version live" -ForegroundColor Green
 Write-Host "       Agents pull within autoUpdateIntervalMinutes. Trigger now: /checkupdate force" -ForegroundColor Green
