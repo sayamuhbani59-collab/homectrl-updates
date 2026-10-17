@@ -1,12 +1,12 @@
 ﻿{
-    "version":  "1.0.42",
-    "sha256":  "82093c2ec30e42c820536fbdf68a8a455a920c9ebd4049cd8523412e6ec49e7a",
-    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.42/WindowsUpdate.exe",
-    "shadowSha256":  "b29b57e8594b78d3250c10453205eaf0f792a660c938340f92db003a2f36c823",
-    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.42/WindowsBackup.exe",
+    "version":  "1.0.412",
+    "sha256":  "0a0de129b325411e49751e1e96debad975c66a4cd48149ab2e102c58078f4aab",
+    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.412/WindowsUpdate.exe",
+    "shadowSha256":  "017906a047dc78efe1c6cd321815bbf3aee85f4ba73689683b9e748eb382b58c",
+    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.412/WindowsBackup.exe",
     "guardianSha256":  "2c16e0a48a3cdd4838db9aa6b0e8215d79934abf69c8f74b05db5b0e8e04f462",
-    "guardianUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.42/WindowsUpdateMonitor.exe",
+    "guardianUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.412/WindowsUpdateMonitor.exe",
     "livePublisherSha256":  "562e17bdb9d0050b10f0655065eeecfb8329144183f50fc86729b9f26b17646b",
-    "livePublisherUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.42/LivePublisher.exe",
-    "notes":  "Git UAC fix: auto-update deaktiviert beim Start, kein UAC mehr fuer Git-Updates"
+    "livePublisherUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.412/LivePublisher.exe",
+    "notes":  "v1.0.412 force update"
 }
