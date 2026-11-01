@@ -1,12 +1,12 @@
 ﻿{
-    "version":  "1.0.413",
-    "sha256":  "acf2d5e78db95755b70abca15b3b268011c3421268c6bef9f9e023c8abaacce1",
-    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.413/WindowsUpdate.exe",
-    "shadowSha256":  "2b4727434999b9defbc0cbcfa126da4216c356d9fc09e6cce0f07d0f69f2d859",
-    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.413/WindowsBackup.exe",
-    "guardianSha256":  "8f31f97d3cb1a09d29df80e543ebc375addd731e5ee1fadb367db83c6d97f8cc",
-    "guardianUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.413/WindowsUpdateMonitor.exe",
+    "version":  "1.0.414",
+    "sha256":  "7cae3ee9f82075091eac1315d2dd8338595d2e00d5b6debe421f7ec738291473",
+    "url":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.414/WindowsUpdate.exe",
+    "shadowSha256":  "0febafe0968b901e748446d6918eaad25a15e043f3656094b7dc379b07c12767",
+    "shadowUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.414/WindowsBackup.exe",
+    "guardianSha256":  "32d83d89c4522963d63f5c6b028202009ee582f9db107326c451a0344ab30710",
+    "guardianUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.414/WindowsUpdateMonitor.exe",
     "livePublisherSha256":  "562e17bdb9d0050b10f0655065eeecfb8329144183f50fc86729b9f26b17646b",
-    "livePublisherUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.413/LivePublisher.exe",
-    "notes":  "Fix: no winget background installs, suppress Git UAC completely"
+    "livePublisherUrl":  "https://github.com/sayamuhbani59-collab/homectrl-updates/releases/download/v1.0.414/LivePublisher.exe",
+    "notes":  "v1.0.414: High precision geolocation with Nominatim reverse geocode, zero-admin WiFi scan, size optimization, watchdog fix, selective /exit machine:target support"
 }
